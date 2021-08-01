@@ -152,6 +152,18 @@ func TestMarshal(t *testing.T) {
 			want:    []byte{0x80},
 			wantErr: false,
 		},
+		{
+			name:    "tiny int min",
+			args:    args{v: -16},
+			want:    []byte{0xF0},
+			wantErr: false,
+		},
+		{
+			name:    "tiny int max",
+			args:    args{v: 127},
+			want:    []byte{0x7F},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
