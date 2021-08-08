@@ -52,6 +52,10 @@ func (e encoder) marshal(v interface{}) error {
 		err = encodeInt(e.buf, int(val))
 	case int64:
 		err = encodeInt(e.buf, int(val))
+	case float32:
+		err = encodeFloat(e.buf, float64(val))
+	case float64:
+		err = encodeFloat(e.buf, val)
 	case Marshaller:
 		err = encodeMarshaller(e.buf, val)
 	default:
@@ -117,6 +121,13 @@ func encodeInt(buf *bytes.Buffer, v int) error {
 	} else {
 		return errors.New("unable to encode int")
 	}
+
+	return nil
+}
+
+func encodeFloat(buf *bytes.Buffer, v float64) error {
+	buf.WriteByte(0xC1)
+	binary.Write(buf, binary.BigEndian, v)
 
 	return nil
 }

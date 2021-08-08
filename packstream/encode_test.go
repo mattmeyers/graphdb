@@ -248,6 +248,12 @@ func TestMarshal(t *testing.T) {
 			want:    []byte{0xCB, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF, 0xFF, 0xFF},
 			wantErr: false,
 		},
+		{
+			name:    "float",
+			args:    args{v: 1.23},
+			want:    []byte{0xC1, 0x3F, 0xF3, 0xAE, 0x14, 0x7A, 0xE1, 0x47, 0xAE},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
