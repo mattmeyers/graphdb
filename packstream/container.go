@@ -12,7 +12,7 @@ import (
 // in the list at the time of encoding, then an error will occur.
 type List []interface{}
 
-// shortListMarkers is a quick lookup table for strings of length less than
+// shortListMarkers is a quick lookup table for lists of length less than
 // 16 bytes.
 var shortListMarkers = [16]byte{
 	0x90, 0x91, 0x92, 0x93,
@@ -61,7 +61,7 @@ func (l List) MarshalPackstream() ([]byte, error) {
 
 type Dictionary map[string]interface{}
 
-// shortDictionaryMarkers is a quick lookup table for strings of length less than
+// shortDictionaryMarkers is a quick lookup table for dictionaries of length less than
 // 16 bytes.
 var shortDictionaryMarkers = [16]byte{
 	0xA0, 0xA1, 0xA2, 0xA3,

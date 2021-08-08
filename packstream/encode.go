@@ -88,9 +88,32 @@ func encodeBytes(buf *bytes.Buffer, v []byte) error {
 	return nil
 }
 
+// encodeInt provides an optimal int64 encoding based on the packstream spec.
+// The encoding table is as such:
+// 	Minimum                         Maximum                     Optimal Representation
+// 	-9_223_372_036_854_775_808      -2_147_483_649              INT_64
+// 	-2_147_483_648                  -32_769                     INT_32
+// 	-32_768                         -129                        INT_16
+// 	-128                            -17                         INT_8
+// 	-16                             +127                        TINY_INT
+// 	+128                            +32_767                     INT_16
+// 	+32_768                         +2_147_483_647              INT_32
+// 	+2_147_483_648                  +9_223_372_036_854_775_807  INT_64
 func encodeInt(buf *bytes.Buffer, v int) error {
-	if -16 <= v && v <= 128 {
+	if -16 <= v && v <= 127 { // TINY_INT
 		buf.WriteByte(byte(v))
+	} else if -128 <= v && v <= -17 { // INT_8
+		buf.WriteByte(0xC8)
+		binary.Write(buf, binary.BigEndian, byte(v))
+	} else if -32_768 <= v && v <= 32_767 { // INT_16
+		buf.WriteByte(0xC9)
+		binary.Write(buf, binary.BigEndian, int16(v))
+	} else if -2_147_483_648 <= v && v <= 2_147_483_647 { // INT_32
+		buf.WriteByte(0xCA)
+		binary.Write(buf, binary.BigEndian, int32(v))
+	} else if -9_223_372_036_854_775_808 <= v && v <= 9_223_372_036_854_775_807 { // INT_64
+		buf.WriteByte(0xCB)
+		binary.Write(buf, binary.BigEndian, int64(v))
 	} else {
 		return errors.New("unable to encode int")
 	}

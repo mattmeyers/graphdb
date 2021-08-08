@@ -164,6 +164,90 @@ func TestMarshal(t *testing.T) {
 			want:    []byte{0x7F},
 			wantErr: false,
 		},
+		{
+			name:    "negative 8 bit int min",
+			args:    args{v: -128},
+			want:    []byte{0xC8, 0x80},
+			wantErr: false,
+		},
+		{
+			name:    "negative 8 bit int max",
+			args:    args{v: -17},
+			want:    []byte{0xC8, 0xEF},
+			wantErr: false,
+		},
+		{
+			name:    "positive 16 bit int min",
+			args:    args{v: 128},
+			want:    []byte{0xC9, 0x00, 0x80},
+			wantErr: false,
+		},
+		{
+			name:    "positive 16 bit int max",
+			args:    args{v: 32_767},
+			want:    []byte{0xC9, 0x7F, 0xFF},
+			wantErr: false,
+		},
+		{
+			name:    "negative 16 bit int min",
+			args:    args{v: -32_768},
+			want:    []byte{0xC9, 0x80, 0x00},
+			wantErr: false,
+		},
+		{
+			name:    "negative 16 bit int max",
+			args:    args{v: -129},
+			want:    []byte{0xC9, 0xff, 0x7f},
+			wantErr: false,
+		},
+		{
+			name:    "positive 32 bit int min",
+			args:    args{v: 32_768},
+			want:    []byte{0xCA, 0x00, 0x00, 0x80, 0x00},
+			wantErr: false,
+		},
+		{
+			name:    "positive 32 bit int max",
+			args:    args{v: 2_147_483_647},
+			want:    []byte{0xCA, 0x7F, 0xFF, 0xFF, 0xFF},
+			wantErr: false,
+		},
+		{
+			name:    "negative 32 bit int min",
+			args:    args{v: -2_147_483_648},
+			want:    []byte{0xCA, 0x80, 0x00, 0x00, 0x00},
+			wantErr: false,
+		},
+		{
+			name:    "negative 32 bit int max",
+			args:    args{v: -32_769},
+			want:    []byte{0xCA, 0xFF, 0xFF, 0x7F, 0xFF},
+			wantErr: false,
+		},
+		{
+			name:    "positive 64 bit int min",
+			args:    args{v: 2_147_483_648},
+			want:    []byte{0xCB, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00},
+			wantErr: false,
+		},
+		{
+			name:    "positive 64 bit int max",
+			args:    args{v: 9_223_372_036_854_775_807},
+			want:    []byte{0xCB, 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
+			wantErr: false,
+		},
+		{
+			name:    "negative 64 bit int min",
+			args:    args{v: -9_223_372_036_854_775_808},
+			want:    []byte{0xCB, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+			wantErr: false,
+		},
+		{
+			name:    "negative 64 bit int max",
+			args:    args{v: -2_147_483_649},
+			want:    []byte{0xCB, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF, 0xFF, 0xFF},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -173,7 +257,7 @@ func TestMarshal(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Marshal() = %b, want %x", got, tt.want)
+				t.Errorf("Marshal() = %x, want %x", got, tt.want)
 			}
 		})
 	}
